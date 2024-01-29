@@ -86,6 +86,23 @@ double GraphModel::minX() const
     return m_minX;
 }
 
+QString GraphModel::measurementInfo()
+{
+    QString allHeadersStr;
+
+    std::for_each(m_headers.cbegin(), m_headers.cend(), [&allHeadersStr](const auto& el) {
+        allHeadersStr += el.value() += "<br>";
+    });
+
+    return allHeadersStr;
+}
+
+void GraphModel::addInformation(const QVector<Header>& _headers)
+{
+    if (m_headers == _headers) return;
+    m_headers = _headers;
+}
+
 void GraphModel::addPoint(const QPointF& point)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());

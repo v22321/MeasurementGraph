@@ -2,7 +2,9 @@
 #include "header.h"
 #include "measuredata.h"
 
+#include <QCoreApplication>
 #include <QDebug>
+#include <QStringLiteral>
 
 bool SsdDataReader::parseLines(QFile& _file)
 {

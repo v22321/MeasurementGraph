@@ -2,6 +2,7 @@
 #define GRAPHMODEL_H
 
 #include "../data_parser/measuredata.h"
+#include "../data_parser/header.h"
 
 #include <QAbstractTableModel>
 #include <QPointF>
@@ -18,6 +19,7 @@ class GraphModel : public QAbstractTableModel
     Q_PROPERTY(double maxX READ maxX CONSTANT)
     Q_PROPERTY(double minY READ minY CONSTANT)
     Q_PROPERTY(double minX READ minX CONSTANT)
+    Q_PROPERTY(QString measurementInfo READ measurementInfo CONSTANT)
 
 public:
     // GraphModel();
@@ -38,12 +40,16 @@ public:
     void setMinX(const double _minX);
     double minX() const;
 
+    QString measurementInfo();
+    void addInformation(const QVector<Header>& _headers);
+
     void addPoint(const QPointF& point);
     void resetPoints(QVector<QPointF> _measureData);
     void addPoints(const QVector<MeasureData>& _measureData);
 
 private:
     QVector<QPointF> m_points;
+    QVector<Header> m_headers;
 
     double m_maxY;
     double m_minY;

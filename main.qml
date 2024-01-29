@@ -1,21 +1,72 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 2.15
 import QtCharts 2.15
 
 Window {
-    width: 640
-    height: 480
+    id: window
+    width: 900
+    height: 600
     visible: true
+    // visibility: Window.FullScreen
     title: qsTr("Measurement graph")
 
-    Rectangle {
+    ColumnLayout {
         anchors.fill: parent
-        color: "black"
+        Rectangle {
+            id: errorMessageRect
+            Layout.fillWidth: true
+            Layout.preferredHeight: 60
+            border {
+                width: 2
+                color: "black"
+            }
+            radius: 4
+
+            Row {
+                anchors {
+                    fill: parent
+                    margins: 24
+                }
+                spacing: 12
+
+
+                Label {
+                    id: selectFileLabel
+                    text: "Select file: "
+                    font.pixelSize: 14
+                    textFormat: Text.RichText
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                ComboBox {
+                    id: selectFileCombo
+                    anchors.verticalCenter: parent.verticalCenter
+                    model: ["1", "2", "3"]
+                }
+
+                Button {
+                    id: selectFileBtn
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Make graph"
+                }
+
+                Label {
+                    text: "Error: Input file has wrong format"
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 14
+                    textFormat: Text.RichText
+                }
+
+            }
+        }
 
         ChartView {
             id: chartView
-            anchors.fill: parent
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            // anchors.fill: parent
 
             Component.onCompleted: {
                 if (Qt.isQtObject(seriesMapper))
@@ -41,6 +92,24 @@ Window {
                 tickCount: 10
                 min: Qt.isQtObject(graphData) ? graphData.minY : 0
                 max: Qt.isQtObject(graphData) ? graphData.maxY : 0
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: window.height / 4
+            color: "lightgray"
+
+            Label {
+                anchors {
+                    fill: parent
+                    margins: 12
+                }
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignTop
+                text: Qt.isQtObject(graphData) ? graphData.measurementInfo : "No information"
+                font.pixelSize: 14
+                textFormat: Text.RichText
             }
         }
     }
