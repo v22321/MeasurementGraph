@@ -2,79 +2,50 @@
 #include "header.h"
 #include "measuredata.h"
 
-void SsdDataReader::readData()
+#include <QDebug>
+
+bool SsdDataReader::parseLines(QFile& _file)
 {
-    QFile file(m_filePath);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        qInfo() << "Open file successfull";
-        parseLines(file);
-        file.close();
-    }
-    else
-    {
-        qInfo() << "Open file error!";
-    }
-}
+    if (!_file.isOpen())
+        return true;
 
-QVector<Header> SsdDataReader::headers() const
-{
-    return m_headers;
-}
-
-QVector<MeasureData> SsdDataReader::measurements() const
-{
-    return m_measurements;
-}
-
-void SsdDataReader::parseLines(QFile& _file)
-{
-    qInfo() << "ALA";
-
-
-    // // Создание потока ввода с использованием строки
-    // std::istringstream iss(inputString);
-
-    // // Извлечение слов из потока ввода и добавление их в вектор
-    // std::string word;
-    // while (iss >> word) {
-    //     // words.push_back(word);
-    //     qDebug() << word;
-    // }
-
-
-    // qInfo() << _file.atEnd();
-    // Читаем файл построчно до конца
     while (!_file.atEnd())
     {
-        QByteArray line = _file.readLine();
-        QString lineStr {QString::fromUtf8(line)};
-        // qInfo() << "TYTA>> " << lineStr;
-        // Создание потока ввода с использованием строки
+        QString lineStr { QString::fromUtf8(_file.readLine()) };
+        // ???
+        // if (lineStr.isEmpty() || lineStr.startsWith(" ") || lineStr.startsWith("\n"))
+        // {
+        //     continue;
+        // }
 
-        if (lineStr.isEmpty() || lineStr.startsWith(" ") || lineStr.startsWith("\n"))
-        {
-            continue;
-        }
-
+        /// Fill headers
         if (lineStr.startsWith("#"))
         {
-            // qDebug() << lineStr;
             m_headers.emplace_back(lineStr);
             continue;
         }
 
-        std::istringstream iss(line.toStdString());
-        // Извлечение слов из потока ввода и добавление их в вектор
-        double word;
-        double words[2];
-        int i = 0;
-        while (iss >> word) {
-            // words.push_back(word);
-            // qDebug() << word;
-            words[i++] = word;
+        /// Fill measurement results
+        std::istringstream strStream(lineStr.toStdString());
+        double lineData;
+        QVector<double> currentMeasurements;
+        while (true)
+        {
+            if (strStream >> lineData)
+            {
+                currentMeasurements.append(lineData);
+                if (currentMeasurements.size() > 2)
+                    return true;
+            }
+            else
+                break;
         }
 
-        m_measurements.emplace_back(words[0], words[1]);
+        if (currentMeasurements.size() != 2)
+            return true;
+
+        m_measurements.emplace_back(currentMeasurements[0], currentMeasurements[1]);
     }
+
+    return false;
 }

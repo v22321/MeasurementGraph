@@ -1,12 +1,10 @@
 #include "graphmodel.h"
 #include <QDebug>
 
-GraphModel::GraphModel() : m_maxY(0.0), m_maxX(0.0), m_minY(10000000.0), m_minX(10000000.0)
-{
-    QObject::connect(this, &GraphModel::newPointAdded, this, &GraphModel::addNewPoint,
-                     Qt::QueuedConnection);
-}
-
+GraphModel::GraphModel(const MeasureData &_startElement)
+    : m_maxY(_startElement.getPoint().y()), m_maxX(_startElement.getPoint().x()),
+    m_minY(_startElement.getPoint().y()), m_minX(_startElement.getPoint().x())
+{}
 
 void GraphModel::setMaxY(double _maxY)
 {

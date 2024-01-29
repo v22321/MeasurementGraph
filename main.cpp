@@ -14,26 +14,43 @@ int main(int argc, char *argv[])
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
-    QApplication  app(argc, argv);
-    // QString currentFileName {"blocks_0.ssd"};
-    // QString currentFileName {"blocks.ssd"};
-    // QString currentFileName {"just.rsd"};
-    // QString currentFileName {"sinusoids.ssd"};
-    QString currentFileName {"million.ssd"};
+    QApplication app(argc, argv);
+    const QString currentFileName { "SampleFiles/blocks_0.ssd" };
+    // QString currentFileName {"SampleFiles/blocks.ssd"};
+    // QString currentFileName {"SampleFiles/just.rsd"};
+    // QString currentFileName {"SampleFiles/sinusoids.ssd"};
+    // QString currentFileName {"SampleFiles/million.ssd"};
 
-    QScopedPointer<AbstractDataReader> dataReader(new SsdDataReader(currentFileName));
-    dataReader->readData();
+    bool hasError {true};
 
-    QQmlApplicationEngine engine;
-    auto context = engine.rootContext();
+    /// Get measurement data
+    QSharedPointer<AbstractDataReader> dataReader(new SsdDataReader(currentFileName));
+    hasError = dataReader->readData();
+    if (hasError)
+    {
+        qWarning() << "Can't read file. Stop";
+        return -1;
+    }
 
-    QSharedPointer<GraphModel> graphData(new GraphModel());
+    const auto& measurements { dataReader->measurements() };
+    if (measurements.size() == 0)
+    {
+        qWarning() << "Empty measurements";
+        return -1;
+    }
+
+    const auto& firstElement { measurements.at(0) };
+    /// Set graph data
+    QSharedPointer<GraphModel> graphData(new GraphModel(firstElement));
     graphData->addData(dataReader->measurements());
 
     QSharedPointer<QVXYModelMapper> seriesMapper(new QVXYModelMapper());
     seriesMapper->setModel(graphData.data());
     seriesMapper->setXColumn(0);
     seriesMapper->setYColumn(1);
+
+    QQmlApplicationEngine engine;
+    auto context = engine.rootContext();
 
     context->setContextProperty("seriesMapper", seriesMapper.data());
     context->setContextProperty("graphData", graphData.data());

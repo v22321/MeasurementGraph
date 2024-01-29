@@ -1,7 +1,6 @@
 #ifndef MEASUREDATA_H
 #define MEASUREDATA_H
 
-#include <QString>
 #include <QPointF>
 
 class MeasureData
