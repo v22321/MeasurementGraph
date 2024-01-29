@@ -19,8 +19,6 @@ class GraphModel : public QAbstractTableModel
     Q_PROPERTY(double minY READ minY CONSTANT)
     Q_PROPERTY(double minX READ minX CONSTANT)
 
-    const size_t MAX_WIDTH_POINTS { 2'000 };
-
 public:
     // GraphModel();
     explicit GraphModel(const MeasureData& _startElement);
@@ -41,6 +39,7 @@ public:
     double minX() const;
 
     void addPoint(const QPointF& point);
+    void resetPoints(QVector<QPointF> _measureData);
     void addPoints(const QVector<MeasureData>& _measureData);
 
 private:

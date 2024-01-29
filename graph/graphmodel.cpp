@@ -1,5 +1,7 @@
 #include "graphmodel.h"
-#include <QDebug>
+#include "ipointsadapter.h"
+#include "basepointsadapter.h"
+#include "averagepointsadapter.h"
 
 GraphModel::GraphModel(const MeasureData &_startElement)
     : m_maxY(_startElement.getPoint().y()), m_maxX(_startElement.getPoint().x()),
@@ -92,38 +94,33 @@ void GraphModel::addPoint(const QPointF& point)
     emit pointsChanged();
 }
 
+void GraphModel::resetPoints(QVector<QPointF> _measureData)
+{
+    beginResetModel();
+    m_points.swap(_measureData);
+    endResetModel();
+    emit pointsChanged();
+}
+
 void GraphModel::addPoints(const QVector<MeasureData> &_measureData)
 {
-    const size_t measureDataSize { _measureData.size() };
-    /// If we have many points, we need to calculate the average
-    const size_t stepSize { measureDataSize > MAX_WIDTH_POINTS ? measureDataSize / MAX_WIDTH_POINTS : 1 };
+    QSharedPointer<IPointsAdapter> pointsAdapter;
+    if (_measureData.size() < pointsAdapter->getScreenWidth())
+        pointsAdapter = QSharedPointer<BasePointsAdapter>::create();
+    else
+        pointsAdapter = QSharedPointer<AveragePointsAdapter>::create();
 
-    double averageValue { 0.0 };
-    uint32_t stepNumber { 1 };
-    for (size_t index = 0; index < measureDataSize; ++index)
+    QVector<QPointF> resultPoints { pointsAdapter->convertToPoints(_measureData) };
+
+    /// Update max/min values
+    for (const auto& point : resultPoints)
     {
-        QPointF currPoint { _measureData[index].getPoint() };
-        /// If we have many points, we need to calculate the average
-        if (stepSize > 1)
-        {
-            averageValue += currPoint.y();
-
-            if (index < stepSize * stepNumber - 1)
-                continue;
-
-            currPoint.setY(averageValue / stepSize);
-            currPoint.setX(_measureData[stepSize * (stepNumber - 1)].getPoint().x());
-
-            averageValue = 0;
-            ++stepNumber;
-        }
-
-        addPoint(currPoint);
-
-        /// Update max/min values
-        if (currPoint.x() > maxX()) setMaxX(currPoint.x());
-        if (currPoint.y() > maxY()) setMaxY(currPoint.y());
-        if (currPoint.x() < minX()) setMinX(currPoint.x());
-        if (currPoint.y() < minY()) setMinY(currPoint.y());
+        if (point.x() > maxX()) setMaxX(point.x());
+        if (point.y() > maxY()) setMaxY(point.y());
+        if (point.x() < minX()) setMinX(point.x());
+        if (point.y() < minY()) setMinY(point.y());
     }
+
+    if (!resultPoints.isEmpty())
+        resetPoints(resultPoints);
 }

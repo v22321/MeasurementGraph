@@ -9,6 +9,8 @@ SOURCES += \
         data_parser/header.cpp \
         data_parser/measuredata.cpp \
         data_parser/ssddatareader.cpp \
+        graph/averagepointsadapter.cpp \
+        graph/basepointsadapter.cpp \
         graph/graphmodel.cpp \
         main.cpp
 
@@ -30,4 +32,7 @@ HEADERS += \
     data_parser/header.h \
     data_parser/measuredata.h \
     data_parser/ssddatareader.h \
-    graph/graphmodel.h
+    graph/averagepointsadapter.h \
+    graph/basepointsadapter.h \
+    graph/graphmodel.h \
+    graph/ipointsadapter.h
