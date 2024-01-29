@@ -15,11 +15,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QApplication app(argc, argv);
-    const QString currentFileName { "SampleFiles/blocks_0.ssd" };
-    // QString currentFileName {"SampleFiles/blocks.ssd"};
-    // QString currentFileName {"SampleFiles/just.rsd"};
-    // QString currentFileName {"SampleFiles/sinusoids.ssd"};
-    // QString currentFileName {"SampleFiles/million.ssd"};
+    // const QString currentFileName { "SampleFiles/blocks_0.ssd" };
+    // QString currentFileName { "SampleFiles/blocks.ssd" };
+    // QString currentFileName { "SampleFiles/just.rsd" };
+    // QString currentFileName { "SampleFiles/sinusoids.ssd" };
+    QString currentFileName { "SampleFiles/million.ssd" };
 
     bool hasError {true};
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     const auto& firstElement { measurements.at(0) };
     /// Set graph data
     QSharedPointer<GraphModel> graphData(new GraphModel(firstElement));
-    graphData->addData(dataReader->measurements());
+    graphData->addPoints(dataReader->measurements());
 
     QSharedPointer<QVXYModelMapper> seriesMapper(new QVXYModelMapper());
     seriesMapper->setModel(graphData.data());

@@ -18,7 +18,8 @@ Window {
             anchors.fill: parent
 
             Component.onCompleted: {
-                seriesMapper.series = lineSeries
+                if (Qt.isQtObject(seriesMapper))
+                    seriesMapper.series = lineSeries
             }
 
             LineSeries {

@@ -13,10 +13,10 @@ bool SsdDataReader::parseLines(QFile& _file)
     {
         QString lineStr { QString::fromUtf8(_file.readLine()) };
         // ???
-        // if (lineStr.isEmpty() || lineStr.startsWith(" ") || lineStr.startsWith("\n"))
-        // {
-        //     continue;
-        // }
+        if (lineStr.isEmpty() || lineStr.startsWith(" ") || lineStr.startsWith("\n"))
+        {
+            continue;
+        }
 
         /// Fill headers
         if (lineStr.startsWith("#"))
@@ -35,14 +35,20 @@ bool SsdDataReader::parseLines(QFile& _file)
             {
                 currentMeasurements.append(lineData);
                 if (currentMeasurements.size() > 2)
+                {
+                    qWarning() << "Error with measurement results";
                     return true;
+                }
             }
             else
                 break;
         }
 
         if (currentMeasurements.size() != 2)
+        {
+            qWarning() << "Error with measurement results";
             return true;
+        }
 
         m_measurements.emplace_back(currentMeasurements[0], currentMeasurements[1]);
     }

@@ -19,43 +19,42 @@ class GraphModel : public QAbstractTableModel
     Q_PROPERTY(double minY READ minY CONSTANT)
     Q_PROPERTY(double minX READ minX CONSTANT)
 
+    const size_t MAX_WIDTH_POINTS { 2'000 };
+
 public:
     // GraphModel();
     explicit GraphModel(const MeasureData& _startElement);
 
-    void setMaxY(double _maxY);
-    double maxY();
-    void setMaxX(double _maxX);
-    double maxX();
-
-    void setMinY(double _minY);
-    double minY();
-    void setMinX(double _minX);
-    double minX();
-
-
-    void handleNewPoint(const QPointF& point);
-    void addNewPoint(const QPointF& point);
-
-    void addData(const QVector<MeasureData>& _measureData);
-
-signals:
-    void newPointAdded(const QPointF& point);
-    void ope(double a, double b);
-    void ope2(double a, double b);
-public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
+    // Setters and getters
+    void setMaxY(const double _maxY);
+    double maxY() const;
+    void setMaxX(const double _maxX);
+    double maxX() const;
+    void setMinY(const double _minY);
+    double minY() const;
+    void setMinX(const double _minX);
+    double minX() const;
+
+    void addPoint(const QPointF& point);
+    void addPoints(const QVector<MeasureData>& _measureData);
+
 private:
-    QVector<QPointF> m_data;
+    QVector<QPointF> m_points;
 
     double m_maxY;
     double m_minY;
     double m_maxX;
     double m_minX;
+
+signals:
+    void newPointAdded(const QPointF& point);
+    void pointsChanged();
+
 };
 
 
