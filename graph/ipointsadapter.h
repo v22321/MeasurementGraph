@@ -16,13 +16,13 @@ public:
 
     int32_t getScreenWidth()
     {
-        if (GlobalDefs::CUSTOM_GRAPH_WIDTH_PIXELS == 0)
+        if (GlobalDefs::CUSTOM_WIDTH_GRAPH_PIXELS == 0)
         {
             QSize screenSize { QGuiApplication::primaryScreen()->size() };
             return screenSize.width();
         }
         else
-            return GlobalDefs::CUSTOM_GRAPH_WIDTH_PIXELS;
+            return GlobalDefs::CUSTOM_WIDTH_GRAPH_PIXELS;
     }
     virtual QVector<QPointF> convertToPoints(const QVector<MeasureData>& _data) = 0;
 };
