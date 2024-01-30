@@ -12,7 +12,8 @@ SOURCES += \
         graph/averagepointsadapter.cpp \
         graph/basepointsadapter.cpp \
         graph/graphmodel.cpp \
-        main.cpp
+        main.cpp \
+        uiwrapper.cpp
 
 RESOURCES += qml.qrc
 
@@ -35,4 +36,5 @@ HEADERS += \
     graph/averagepointsadapter.h \
     graph/basepointsadapter.h \
     graph/graphmodel.h \
-    graph/ipointsadapter.h
+    graph/ipointsadapter.h \
+    uiwrapper.h

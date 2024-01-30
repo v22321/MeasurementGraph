@@ -12,6 +12,16 @@ Window {
     // visibility: Window.FullScreen
     title: qsTr("Measurement graph")
 
+    property bool hasError: false
+
+    Connections {
+        target: wrapper
+
+        function onS_hasError() {
+            hasError = true
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         Rectangle {
@@ -20,7 +30,7 @@ Window {
             Layout.preferredHeight: 60
             border {
                 width: 2
-                color: "black"
+                color: hasError ? "red" : "black"
             }
             radius: 4
 
@@ -43,20 +53,28 @@ Window {
                 ComboBox {
                     id: selectFileCombo
                     anchors.verticalCenter: parent.verticalCenter
-                    model: ["1", "2", "3"]
+                    model: Qt.isQtObject(wrapper) ? wrapper.fileNames : "-"
                 }
 
                 Button {
                     id: selectFileBtn
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Make graph"
+
+                    onClicked: {
+                        hasError = false
+                        wrapper.s_createGraph(selectFileCombo.currentValue)
+                    }
                 }
 
                 Label {
+                    id: errorMsg
                     text: "Error: Input file has wrong format"
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 14
+                    color: "red"
                     textFormat: Text.RichText
+                    visible: hasError
                 }
 
             }

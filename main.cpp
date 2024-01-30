@@ -5,9 +5,9 @@
 
 #include <QSharedPointer>
 #include <QDebug>
+#include <QDir>
 
-#include "data_parser/ssddatareader.h"
-#include "graph/graphmodel.h"
+#include "uiwrapper.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,46 +15,47 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QApplication app(argc, argv);
-    const QString currentFileName { "SampleFiles/blocks_0.ssd" };
-    // const QString currentFileName { "SampleFiles/blocks.ssd" };
-    // const QString currentFileName { "SampleFiles/just.rsd" };
-    // const QString currentFileName { "SampleFiles/sinusoids.ssd" };
-    // const QString currentFileName { "SampleFiles/million.ssd" };
 
-    bool hasError {true};
+    // QString filesDir { QCoreApplication::applicationDirPath() + "/SampleFiles/" };
+    // QDir directory(filesDir);
+    // // Получаем список файлов в директории
+    // QStringList fileList { directory.entryList(QDir::Files) };
 
-    /// Get measurement data
-    QSharedPointer<AbstractDataReader> dataReader(new SsdDataReader(currentFileName));
-    hasError = dataReader->readData();
-    if (hasError)
-    {
-        qWarning() << "Can't read file. Stop";
-        return -1;
-    }
 
-    const auto& measurements { dataReader->measurements() };
-    if (measurements.size() == 0)
-    {
-        qWarning() << "Empty measurements";
-        return -1;
-    }
+    // bool hasError {true};
 
-    const auto& firstElement { measurements.at(0) };
-    /// Set graph data
-    QSharedPointer<GraphModel> graphData(new GraphModel(firstElement));
-    graphData->addPoints(dataReader->measurements());
-    graphData->addInformation(dataReader->headers());
+    // /// Get measurement data
+    // QSharedPointer<AbstractDataReader> dataReader(new SsdDataReader("SampleFiles/" + fileList[0]));
+    // hasError = dataReader->readData();
+    // if (hasError)
+    // {
+    //     qWarning() << "Can't read file. Stop";
+    //     return -1;
+    // }
 
-    QSharedPointer<QVXYModelMapper> seriesMapper(new QVXYModelMapper());
-    seriesMapper->setModel(graphData.data());
-    seriesMapper->setXColumn(0);
-    seriesMapper->setYColumn(1);
+    // const auto& measurements { dataReader->measurements() };
+    // if (measurements.size() == 0)
+    // {
+    //     qWarning() << "Empty measurements";
+    //     return -1;
+    // }
+
+    // const auto& firstElement { measurements.at(0) };
+    // /// Set graph data
+    // QSharedPointer<GraphModel> graphData(new GraphModel(firstElement));
+    // graphData->addPoints(dataReader->measurements());
+    // graphData->addInformation(dataReader->headers());
+    // graphData->setFileNames(fileList);
+
+    // QSharedPointer<QVXYModelMapper> seriesMapper(new QVXYModelMapper());
+    // seriesMapper->setModel(graphData.data());
+    // seriesMapper->setXColumn(0);
+    // seriesMapper->setYColumn(1);
 
     QQmlApplicationEngine engine;
-    auto context = engine.rootContext();
-
-    context->setContextProperty("seriesMapper", seriesMapper.data());
-    context->setContextProperty("graphData", graphData.data());
+    UIWrapper uiWrapper;
+    uiWrapper.init(engine.rootContext());
+    uiWrapper.createGraph();
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
     engine.load(url);
+
 
     return app.exec();
 }

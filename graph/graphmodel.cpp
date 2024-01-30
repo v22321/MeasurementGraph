@@ -3,10 +3,17 @@
 #include "basepointsadapter.h"
 #include "averagepointsadapter.h"
 
-GraphModel::GraphModel(const MeasureData &_startElement)
-    : m_maxY(_startElement.getPoint().y()), m_maxX(_startElement.getPoint().x()),
-    m_minY(_startElement.getPoint().y()), m_minX(_startElement.getPoint().x())
+GraphModel::GraphModel()
+    : m_maxY(0.), m_maxX(0.), m_minY(0.), m_minX(0.)
 {}
+
+void GraphModel::setStartPoint(const QPointF &_point)
+{
+    m_maxY = _point.y();
+    m_maxX = _point.x();
+    m_minY = _point.y();
+    m_minX = _point.x();
+}
 
 int GraphModel::rowCount(const QModelIndex &parent) const
 {
@@ -46,6 +53,7 @@ void GraphModel::setMaxY(const double _maxY)
 {
     if (m_maxY == _maxY) return;
     m_maxY = _maxY;
+    emit borderChanged();
 }
 
 double GraphModel::maxY() const
@@ -57,6 +65,7 @@ void GraphModel::setMaxX(const double _maxX)
 {
     if (m_maxX == _maxX) return;
     m_maxX = _maxX;
+    emit borderChanged();
 }
 
 double GraphModel::maxX() const
@@ -68,6 +77,7 @@ void GraphModel::setMinY(const double _minY)
 {
     if (m_minY == _minY) return;
     m_minY = _minY;
+    emit borderChanged();
 }
 
 double GraphModel::minY() const
@@ -79,6 +89,7 @@ void GraphModel::setMinX(const double _minX)
 {
     if (m_minX == _minX) return;
     m_minX = _minX;
+    emit borderChanged();
 }
 
 double GraphModel::minX() const
@@ -101,6 +112,7 @@ void GraphModel::addInformation(const QVector<Header>& _headers)
 {
     if (m_headers == _headers) return;
     m_headers = _headers;
+    emit measurementInfoChanged();
 }
 
 void GraphModel::addPoint(const QPointF& point)

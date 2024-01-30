@@ -15,15 +15,16 @@ class GraphModel : public QAbstractTableModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(double maxY READ maxY CONSTANT)
-    Q_PROPERTY(double maxX READ maxX CONSTANT)
-    Q_PROPERTY(double minY READ minY CONSTANT)
-    Q_PROPERTY(double minX READ minX CONSTANT)
-    Q_PROPERTY(QString measurementInfo READ measurementInfo CONSTANT)
+    Q_PROPERTY(double maxY READ maxY NOTIFY borderChanged)
+    Q_PROPERTY(double maxX READ maxX NOTIFY borderChanged)
+    Q_PROPERTY(double minY READ minY NOTIFY borderChanged)
+    Q_PROPERTY(double minX READ minX NOTIFY borderChanged)
+    Q_PROPERTY(QString measurementInfo READ measurementInfo NOTIFY measurementInfoChanged)
 
 public:
     // GraphModel();
-    explicit GraphModel(const MeasureData& _startElement);
+    GraphModel();
+    void setStartPoint(const QPointF& _point);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -51,6 +52,7 @@ private:
     QVector<QPointF> m_points;
     QVector<Header> m_headers;
 
+    QStringList m_fileList;
     double m_maxY;
     double m_minY;
     double m_maxX;
@@ -59,7 +61,8 @@ private:
 signals:
     void newPointAdded(const QPointF& point);
     void pointsChanged();
-
+    void borderChanged();
+    void measurementInfoChanged();
 };
 
 
