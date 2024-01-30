@@ -27,6 +27,7 @@ UIWrapper::UIWrapper(QObject *parent) :
     connect (m_collector.data(), &DataCollector::s_pointsReady, this, &UIWrapper::updateGraph);
     connect (m_collector.data(), &DataCollector::s_newHeaders, this, &UIWrapper::setNewHeaders);
     connect (m_collector.data(), &DataCollector::s_hasError, this, &UIWrapper::s_hasError);
+    connect (m_collector.data(), &DataCollector::s_setMaxMinXY, this, &UIWrapper::updateMaxMinXY);
     m_collectorThread->start();
 }
 
@@ -61,10 +62,23 @@ bool UIWrapper::updateGraph(const QVector<QPointF>& _points)
 
     m_seriesMapper->setXColumn(0);
     m_seriesMapper->setYColumn(1);
+    qInfo() << ">>>";
     m_seriesMapper->setModel(m_graphData.data());
+    qInfo() << "<<<";
     emit s_graphUpdated();
 
     return false;
+}
+
+void UIWrapper::updateMaxMinXY(const QPair<QPointF, QPointF> &_maxMinXYPair)
+{
+    if (!m_graphData)
+    {
+        qWarning() << "Not found graph data";
+        return;
+    }
+
+    m_graphData->setMaxMinPoints(_maxMinXYPair);
 }
 
 void UIWrapper::setNewHeaders(const QVector<Header> &_headers)

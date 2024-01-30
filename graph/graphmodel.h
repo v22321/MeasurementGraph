@@ -22,7 +22,7 @@ class GraphModel : public QAbstractTableModel
 
 public:
     GraphModel();
-    void setStartPoint(const QPointF& _point);
+    void setMaxMinPoints(const QPair<QPointF, QPointF>& _maxMinXYPair);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;

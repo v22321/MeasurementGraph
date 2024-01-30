@@ -4,12 +4,13 @@ GraphModel::GraphModel()
     : m_fileList(""), m_maxY(0.), m_maxX(0.), m_minY(0.), m_minX(0.)
 {}
 
-void GraphModel::setStartPoint(const QPointF &_point)
+void GraphModel::setMaxMinPoints(const QPair<QPointF, QPointF>& _maxMinXYPair)
 {
-    m_maxY = _point.y();
-    m_maxX = _point.x();
-    m_minY = _point.y();
-    m_minX = _point.x();
+    m_maxX = _maxMinXYPair.first.x();
+    m_maxY = _maxMinXYPair.first.y();
+    m_minX = _maxMinXYPair.second.x();
+    m_minY = _maxMinXYPair.second.y();
+    emit borderChanged();
 }
 
 int GraphModel::rowCount(const QModelIndex &parent) const
@@ -125,19 +126,5 @@ void GraphModel::resetPoints(QVector<QPointF> _measureData)
     beginResetModel();
     m_points.swap(_measureData);
     endResetModel();
-
-    qInfo() << "Points count: " << m_points.size();
-    if (m_points.size() > 0)
-    {
-        setStartPoint(m_points[0]);
-        for (const auto& point : m_points)
-        {
-            if (point.x() > maxX()) setMaxX(point.x());
-            if (point.y() > maxY()) setMaxY(point.y());
-            if (point.x() < minX()) setMinX(point.x());
-            if (point.y() < minY()) setMinY(point.y());
-        }
-    }
-
     emit pointsChanged();
 }

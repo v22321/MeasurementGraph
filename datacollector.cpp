@@ -73,5 +73,21 @@ QVector<QPointF> DataCollector::getPoints(const QVector<MeasureData> &_measureDa
     else
         pointsAdapter = QSharedPointer<AveragePointsAdapter>::create();
 
-    return pointsAdapter->convertToPoints(_measureData);
+    const auto& resultPoints { pointsAdapter->convertToPoints(_measureData) };
+    qInfo() << "Points count: " << resultPoints.size();
+    if (resultPoints.size() > 0)
+    {
+        QPair<QPointF, QPointF> borderPoints { QPointF(resultPoints[0].x(), resultPoints[0].y()),
+                                               QPointF(resultPoints[0].x(), resultPoints[0].y())};
+        for (const auto& point : resultPoints)
+        {
+            if (point.x() > borderPoints.first.x()) borderPoints.first.setX(point.x());
+            if (point.y() > borderPoints.first.y()) borderPoints.first.setY(point.y());
+            if (point.x() < borderPoints.second.x()) borderPoints.second.setX(point.x());
+            if (point.y() < borderPoints.second.y()) borderPoints.second.setY(point.y());
+        }
+        emit s_setMaxMinXY(borderPoints);
+    }
+
+    return resultPoints;
 }

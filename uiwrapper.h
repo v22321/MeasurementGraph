@@ -31,6 +31,7 @@ private:
     /// \return
     ///
     bool updateGraph(const QVector<QPointF>& _points);
+    void updateMaxMinXY(const QPair<QPointF, QPointF>& _maxMinXYPair);
     void setNewHeaders(const QVector<Header>& _headers);
 
     QStringList dataFiles() const;
