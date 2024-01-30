@@ -1,17 +1,27 @@
 #ifndef DATACOLLECTOR_H
 #define DATACOLLECTOR_H
 
-#include <QObject>
+#include "data_parser/header.h"
 #include "data_parser/ssddatareader.h"
 
+#include <QObject>
+#include <QPointF>
+
+///
+/// \brief The DataCollector class Collect measurement data and headers in a separate thread
+///
 class DataCollector : public QObject
 {
     Q_OBJECT
 public:
     DataCollector(QObject *parent = nullptr);
 
-    void initialize();
-    void parseFile(const QString& _fileName);
+    void init();
+    void collect(const QString& _fileName);
+
+private:
+    QSharedPointer<AbstractDataReader> parseFile(const QString& _fileName);
+    QVector<QPointF> getPoints(const QVector<MeasureData>& _measureData);
 
 signals:
     void s_pointsReady(const QVector<QPointF>& _points);

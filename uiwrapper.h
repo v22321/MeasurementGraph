@@ -19,12 +19,17 @@ class UIWrapper : public QObject
     Q_PROPERTY(QStringList dataFiles READ dataFiles CONSTANT)
 
 public:
-    explicit UIWrapper (QObject *parent = nullptr);
+    explicit UIWrapper(QObject *parent = nullptr);
     ~UIWrapper();
 
     void init(QQmlContext* _context);
 
 private:
+    ///
+    /// \brief updateGraph Update graph with measurement data
+    /// \param _points
+    /// \return
+    ///
     bool updateGraph(const QVector<QPointF>& _points);
     void setNewHeaders(const QVector<Header>& _headers);
 

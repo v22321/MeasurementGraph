@@ -21,9 +21,9 @@ UIWrapper::UIWrapper(QObject *parent) :
 
     /// Setup collector
     m_collector->moveToThread(m_collectorThread.data());
-    connect (m_collectorThread.data(), &QThread::started, m_collector.data(), &DataCollector::initialize);
+    connect (m_collectorThread.data(), &QThread::started, m_collector.data(), &DataCollector::init);
     connect (m_collectorThread.data(), &QThread::finished, m_collectorThread.data(), &QThread::deleteLater);
-    connect (this, &UIWrapper::s_createGraph, m_collector.data(), &DataCollector::parseFile);
+    connect (this, &UIWrapper::s_createGraph, m_collector.data(), &DataCollector::collect);
     connect (m_collector.data(), &DataCollector::s_pointsReady, this, &UIWrapper::updateGraph);
     connect (m_collector.data(), &DataCollector::s_newHeaders, this, &UIWrapper::setNewHeaders);
     connect (m_collector.data(), &DataCollector::s_hasError, this, &UIWrapper::s_hasError);

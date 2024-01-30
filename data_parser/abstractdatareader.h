@@ -12,7 +12,8 @@
 ///
 class AbstractDataReader {
 public:
-    AbstractDataReader(const QString& _filePath);
+    explicit AbstractDataReader(const QString& _filePath);
+    virtual ~AbstractDataReader();
 
     QVector<Header> headers() const;
     QVector<MeasureData> measurements() const;

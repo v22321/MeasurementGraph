@@ -9,6 +9,10 @@ AbstractDataReader::AbstractDataReader(const QString &_filePath)
 {
 }
 
+AbstractDataReader::~AbstractDataReader()
+{
+}
+
 QVector<Header> AbstractDataReader::headers() const
 {
     return m_headers;

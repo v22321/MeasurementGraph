@@ -2,9 +2,7 @@
 #include "header.h"
 #include "measuredata.h"
 
-#include <QCoreApplication>
 #include <QDebug>
-#include <QStringLiteral>
 
 bool SsdDataReader::parseLines(QFile& _file)
 {
@@ -29,25 +27,22 @@ bool SsdDataReader::parseLines(QFile& _file)
 
         /// Fill measurement results
         std::istringstream strStream(lineStr.toStdString());
-        double lineData;
+        double currentNumber;
         QVector<double> currentMeasurements;
-        while (true)
+        while (strStream >> currentNumber)
         {
-            if (strStream >> lineData)
+            currentMeasurements.emplace_back(currentNumber);
+            if (currentMeasurements.size() > 2)
             {
-                currentMeasurements.append(lineData);
-                if (currentMeasurements.size() > 2)
-                {
-                    qWarning() << "Error with measurement results";
-                    return true;
-                }
+                qWarning() << "Error with measurement results";
+                return true;
             }
-            else
+
+            if (strStream.eof())
                 break;
         }
 
-        if (currentMeasurements.size() != 2)
-        {
+        if ((!strStream.eof() && strStream.fail()) || currentMeasurements.size() != 2) {
             qWarning() << "Error with measurement results";
             return true;
         }

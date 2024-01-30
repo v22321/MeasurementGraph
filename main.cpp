@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QApplication app(argc, argv);
-
     QQmlApplicationEngine engine;
+
     UIWrapper uiWrapper;
     uiWrapper.init(engine.rootContext());
     // uiWrapper.createGraph();
