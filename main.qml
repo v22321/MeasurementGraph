@@ -13,6 +13,8 @@ Window {
     title: qsTr("Measurement graph")
 
     property bool hasError: false
+    readonly property int currentPixelSize: 14
+    readonly property int desktopMargin: 24
 
     Connections {
         target: wrapper
@@ -33,7 +35,7 @@ Window {
         Rectangle {
             id: errorMessageRect
             Layout.fillWidth: true
-            Layout.preferredHeight: 60
+            Layout.preferredHeight: window.height / 10
             border {
                 width: 2
                 color: hasError ? "red" : "black"
@@ -43,15 +45,15 @@ Window {
             Row {
                 anchors {
                     fill: parent
-                    margins: 24
+                    margins: desktopMargin
                 }
-                spacing: 12
+                spacing: desktopMargin / 2
 
 
                 Label {
                     id: selectFileLabel
-                    text: "Select file: "
-                    font.pixelSize: 14
+                    text: qsTr("Select file") + ": "
+                    font.pixelSize: currentPixelSize
                     textFormat: Text.RichText
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -59,31 +61,36 @@ Window {
                 ComboBox {
                     id: selectFileCombo
                     anchors.verticalCenter: parent.verticalCenter
-                    model: Qt.isQtObject(wrapper) ? wrapper.fileNames : "-"
+                    model: Qt.isQtObject(wrapper) ? wrapper.dataFiles : "-"
+                    enabled: selectFileBtn.enabled
                 }
 
                 Button {
                     id: selectFileBtn
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "Make graph"
+                    text: qsTr("Create graph")
 
                     onClicked: {
-                        selectFileBtn.enabled = false
-                        hasError = false
-                        wrapper.s_createGraph(selectFileCombo.currentValue)
+                        if (Qt.isQtObject(wrapper))
+                        {
+                            selectFileBtn.enabled = false
+                            hasError = false
+                            wrapper.s_createGraph(selectFileCombo.currentValue)
+                        }
+                        else
+                            hasError = true
                     }
                 }
 
                 Label {
                     id: errorMsg
-                    text: "Error: Input file has wrong format"
+                    text: qsTr("Error: Input file has wrong format")
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 14
+                    font.pixelSize: currentPixelSize
                     color: "red"
                     textFormat: Text.RichText
                     visible: hasError
                 }
-
             }
         }
 
@@ -91,7 +98,6 @@ Window {
             id: chartView
             Layout.fillHeight: true
             Layout.fillWidth: true
-            // anchors.fill: parent
 
             Component.onCompleted: {
                 if (Qt.isQtObject(seriesMapper))
@@ -128,12 +134,12 @@ Window {
             Label {
                 anchors {
                     fill: parent
-                    margins: 12
+                    margins: desktopMargin / 2
                 }
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignTop
                 text: Qt.isQtObject(graphData) ? graphData.measurementInfo : "No information"
-                font.pixelSize: 14
+                font.pixelSize: currentPixelSize
                 textFormat: Text.RichText
             }
         }

@@ -1,7 +1,6 @@
 #ifndef GRAPHMODEL_H
 #define GRAPHMODEL_H
 
-#include "../data_parser/measuredata.h"
 #include "../data_parser/header.h"
 
 #include <QAbstractTableModel>
@@ -22,7 +21,6 @@ class GraphModel : public QAbstractTableModel
     Q_PROPERTY(QString measurementInfo READ measurementInfo NOTIFY measurementInfoChanged)
 
 public:
-    // GraphModel();
     GraphModel();
     void setStartPoint(const QPointF& _point);
 

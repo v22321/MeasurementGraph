@@ -1,11 +1,6 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QtCharts/QVXYModelMapper>
-
-#include <QSharedPointer>
-#include <QDebug>
-#include <QDir>
 
 #include "uiwrapper.h"
 
@@ -32,7 +27,6 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
     engine.load(url);
-
 
     return app.exec();
 }

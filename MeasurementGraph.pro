@@ -35,6 +35,7 @@ HEADERS += \
     data_parser/measuredata.h \
     data_parser/ssddatareader.h \
     datacollector.h \
+    defines.h \
     graph/averagepointsadapter.h \
     graph/basepointsadapter.h \
     graph/graphmodel.h \

@@ -1,21 +1,28 @@
+#include "defines.h"
 #include "datacollector.h"
 #include "graph/ipointsadapter.h"
 #include "graph/basepointsadapter.h"
 #include "graph/averagepointsadapter.h"
 
 #include <QDebug>
+#include <QDir>
 
 DataCollector::DataCollector(QObject *parent) : QObject(parent) {}
 
 void DataCollector::initialize()
 {
-    qInfo() << "START THREAD";
+    qInfo() << "Collector is working...";
 }
 
 void DataCollector::parseFile(const QString &_fileName)
 {
     /// Get measurement data
-    QSharedPointer<AbstractDataReader> dataReader(new SsdDataReader("SampleFiles/" + _fileName));
+    QSharedPointer<AbstractDataReader> dataReader(
+        new SsdDataReader(QString("%1%2%3").arg(
+            GlobalDefs::MEASUREMENT_FILES_DIR,
+            QDir::separator(),
+            _fileName))
+        );
     bool hasError = dataReader->readData();
     if (hasError)
     {

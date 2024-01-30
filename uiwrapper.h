@@ -5,41 +5,46 @@
 #include "datacollector.h"
 
 #include <QString>
-#include <QObject>
 #include <QtCharts/QVXYModelMapper>
 #include <QQmlContext>
+#include <QThread>
 
+///
+/// \brief The UIWrapper class - Interaction with UI
+///
 class UIWrapper : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QStringList fileNames READ fileNames CONSTANT)
+    Q_PROPERTY(QStringList dataFiles READ dataFiles CONSTANT)
 
-    const QString MEASUREMENT_FILES_DIR { "SampleFiles" };
 public:
     explicit UIWrapper (QObject *parent = nullptr);
     ~UIWrapper();
 
     void init(QQmlContext* _context);
 
-    QStringList fileNames();
-
 private:
-    bool createGraph(const QVector<QPointF>& _points);
+    bool updateGraph(const QVector<QPointF>& _points);
     void setNewHeaders(const QVector<Header>& _headers);
 
+    QStringList dataFiles() const;
+
 private:
-    QStringList m_filesList;
+    QStringList m_dataFiles;
     QSharedPointer<GraphModel> m_graphData;
     QSharedPointer<QVXYModelMapper> m_seriesMapper;
 
+    /// Collector measurement data from file in thread
     QSharedPointer<DataCollector> m_collector;
     QSharedPointer<QThread> m_collectorThread;
 
 signals:
+    /// Start create graph
+    void s_createGraph(const QString& _fileName);
+
     void s_hasError();
     void s_graphUpdated();
-    void s_createGraph(const QString& _fileName);
 };
 
 #endif // UIWRAPPER_H

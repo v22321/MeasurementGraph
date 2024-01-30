@@ -1,10 +1,7 @@
 #include "graphmodel.h"
-#include "ipointsadapter.h"
-#include "basepointsadapter.h"
-#include "averagepointsadapter.h"
 
 GraphModel::GraphModel()
-    : m_maxY(0.), m_maxX(0.), m_minY(0.), m_minX(0.)
+    : m_fileList(""), m_maxY(0.), m_maxX(0.), m_minY(0.), m_minX(0.)
 {}
 
 void GraphModel::setStartPoint(const QPointF &_point)
@@ -129,6 +126,7 @@ void GraphModel::resetPoints(QVector<QPointF> _measureData)
     m_points.swap(_measureData);
     endResetModel();
 
+    qInfo() << "Points size: " << m_points.size();
     if (m_points.size() > 0)
     {
         setStartPoint(m_points[0]);
@@ -140,5 +138,6 @@ void GraphModel::resetPoints(QVector<QPointF> _measureData)
             if (point.y() < minY()) setMinY(point.y());
         }
     }
+
     emit pointsChanged();
 }
