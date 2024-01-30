@@ -46,7 +46,6 @@ public:
 
     void addPoint(const QPointF& point);
     void resetPoints(QVector<QPointF> _measureData);
-    void addPoints(const QVector<MeasureData>& _measureData);
 
 private:
     QVector<QPointF> m_points;

@@ -19,6 +19,12 @@ Window {
 
         function onS_hasError() {
             hasError = true
+            selectFileBtn.enabled = true
+        }
+
+        function onS_graphUpdated() {
+            console.log("Graph updated")
+            selectFileBtn.enabled = true
         }
     }
 
@@ -62,6 +68,7 @@ Window {
                     text: "Make graph"
 
                     onClicked: {
+                        selectFileBtn.enabled = false
                         hasError = false
                         wrapper.s_createGraph(selectFileCombo.currentValue)
                     }

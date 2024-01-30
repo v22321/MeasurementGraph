@@ -128,28 +128,17 @@ void GraphModel::resetPoints(QVector<QPointF> _measureData)
     beginResetModel();
     m_points.swap(_measureData);
     endResetModel();
-    emit pointsChanged();
-}
 
-void GraphModel::addPoints(const QVector<MeasureData> &_measureData)
-{
-    QSharedPointer<IPointsAdapter> pointsAdapter;
-    if (_measureData.size() < pointsAdapter->getScreenWidth())
-        pointsAdapter = QSharedPointer<BasePointsAdapter>::create();
-    else
-        pointsAdapter = QSharedPointer<AveragePointsAdapter>::create();
-
-    QVector<QPointF> resultPoints { pointsAdapter->convertToPoints(_measureData) };
-
-    /// Update max/min values
-    for (const auto& point : resultPoints)
+    if (m_points.size() > 0)
     {
-        if (point.x() > maxX()) setMaxX(point.x());
-        if (point.y() > maxY()) setMaxY(point.y());
-        if (point.x() < minX()) setMinX(point.x());
-        if (point.y() < minY()) setMinY(point.y());
+        setStartPoint(m_points[0]);
+        for (const auto& point : m_points)
+        {
+            if (point.x() > maxX()) setMaxX(point.x());
+            if (point.y() > maxY()) setMaxY(point.y());
+            if (point.x() < minX()) setMinX(point.x());
+            if (point.y() < minY()) setMinY(point.y());
+        }
     }
-
-    if (!resultPoints.isEmpty())
-        resetPoints(resultPoints);
+    emit pointsChanged();
 }

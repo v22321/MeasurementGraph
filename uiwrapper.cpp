@@ -1,69 +1,66 @@
 #include "uiwrapper.h"
-#include <QApplication>
-#include <QQmlApplicationEngine>
+#include <QCoreApplication>
 #include <QQmlContext>
 
-#include <QSharedPointer>
 #include <QDebug>
 #include <QDir>
 #include <QThread>
 
-#include "data_parser/ssddatareader.h"
 #include "graph/graphmodel.h"
 
-
 UIWrapper::UIWrapper(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    m_graphData(QSharedPointer<GraphModel>::create()),
+    m_seriesMapper(QSharedPointer<QVXYModelMapper>::create()),
+    m_collector(QSharedPointer<DataCollector>::create()),
+    m_collectorThread(QSharedPointer<QThread>::create())
 {
-    connect(this, &UIWrapper::s_createGraph, this, &UIWrapper::createGraph, Qt::QueuedConnection);
+    QString filesDir { QString("%1%2%3").arg(QCoreApplication::applicationDirPath(),
+                                             QDir::separator(),
+                                             MEASUREMENT_FILES_DIR)};
+    QDir directory(filesDir);
+    m_filesList = directory.entryList(QDir::Files);
+
+    m_collector->moveToThread(m_collectorThread.data());
+    connect (m_collectorThread.data(), &QThread::started, m_collector.data(), &DataCollector::initialize);
+    connect (m_collectorThread.data(), &QThread::finished, m_collectorThread.data(), &QThread::deleteLater);
+    connect (this, &UIWrapper::s_createGraph, m_collector.data(), &DataCollector::parseFile);
+    connect (m_collector.data(), &DataCollector::s_pointsReady, this, &UIWrapper::createGraph);
+    connect (m_collector.data(), &DataCollector::s_newHeaders, this, &UIWrapper::setNewHeaders);
+    connect (m_collector.data(), &DataCollector::s_hasError, this, &UIWrapper::s_hasError);
+    m_collectorThread->start();
+}
+
+UIWrapper::~UIWrapper()
+{
+    if (m_collectorThread)
+    {
+        m_collectorThread->quit();
+        m_collectorThread->wait();
+    }
 }
 
 void UIWrapper::init(QQmlContext *_context)
 {
-    QString filesDir { QCoreApplication::applicationDirPath() + "/SampleFiles/" };
-    QDir directory(filesDir);
-    m_filesList = directory.entryList(QDir::Files);
-
-    m_graphData = QSharedPointer<GraphModel>::create();
-    m_seriesMapper = QSharedPointer<QVXYModelMapper>::create();
-
     _context->setContextProperty("wrapper", this);
     _context->setContextProperty("seriesMapper", m_seriesMapper.data());
     _context->setContextProperty("graphData", m_graphData.data());
 }
 
-bool UIWrapper::createGraph(const QString& _fileName)
+bool UIWrapper::createGraph(const QVector<QPointF>& _points)
 {
-    bool hasError {true};
-
-    /// Get measurement data
-    QSharedPointer<AbstractDataReader> dataReader(new SsdDataReader("SampleFiles/" + _fileName));
-    hasError = dataReader->readData();
-    if (hasError)
-    {
-        qWarning() << "Can't read file. Stop";
-        emit s_hasError();
-        return -1;
-    }
-
-    const auto& measurements { dataReader->measurements() };
-    if (measurements.size() == 0)
-    {
-        qWarning() << "Empty measurements";
-        emit s_hasError();
-        return -1;
-    }
-
-    const auto& firstElement { measurements.at(0) };
-    m_graphData->setStartPoint(firstElement.getPoint());
-
     /// Set graph data
-    m_graphData->addPoints(dataReader->measurements());
-    m_graphData->addInformation(dataReader->headers());
+    m_graphData->resetPoints(_points);
 
     m_seriesMapper->setXColumn(0);
     m_seriesMapper->setYColumn(1);
     m_seriesMapper->setModel(m_graphData.data());
+    emit s_graphUpdated();
+}
+
+void UIWrapper::setNewHeaders(const QVector<Header> &_headers)
+{
+    m_graphData->addInformation(_headers);
 }
 
 QStringList UIWrapper::fileNames()
