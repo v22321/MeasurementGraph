@@ -106,7 +106,7 @@ Window {
 
             LineSeries {
                 id: lineSeries
-                name: "Measurement results"
+                name: qsTr("Measurement results")
                 axisX: customAxisX
                 axisY: customAxisY
             }
@@ -138,7 +138,7 @@ Window {
                 }
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignTop
-                text: Qt.isQtObject(graphData) ? graphData.measurementInfo : "No information"
+                text: Qt.isQtObject(graphData) ? graphData.measurementInfo : qsTr("No information")
                 font.pixelSize: currentPixelSize
                 textFormat: Text.RichText
             }

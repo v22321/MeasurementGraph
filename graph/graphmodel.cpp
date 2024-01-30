@@ -126,7 +126,7 @@ void GraphModel::resetPoints(QVector<QPointF> _measureData)
     m_points.swap(_measureData);
     endResetModel();
 
-    qInfo() << "Points size: " << m_points.size();
+    qInfo() << "Points count: " << m_points.size();
     if (m_points.size() > 0)
     {
         setStartPoint(m_points[0]);
