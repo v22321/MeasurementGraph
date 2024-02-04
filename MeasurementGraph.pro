@@ -1,4 +1,4 @@
-QT += quick charts
+QT += quick charts concurrent core-private
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -13,6 +13,7 @@ SOURCES += \
         graph/averagepointsadapter.cpp \
         graph/basepointsadapter.cpp \
         graph/graphmodel.cpp \
+        graph.cpp \
         main.cpp \
         uiwrapper.cpp
 
@@ -35,6 +36,7 @@ HEADERS += \
     data_parser/measuredata.h \
     data_parser/ssddatareader.h \
     datacollector.h \
+    graph.h \
     defines.h \
     graph/averagepointsadapter.h \
     graph/basepointsadapter.h \

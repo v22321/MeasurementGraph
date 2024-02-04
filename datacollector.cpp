@@ -68,17 +68,18 @@ QSharedPointer<AbstractDataReader> DataCollector::parseFile(const QString &_file
 QVector<QPointF> DataCollector::getPoints(const QVector<MeasureData> &_measureData)
 {
     QSharedPointer<IPointsAdapter> pointsAdapter;
-    if (_measureData.size() < pointsAdapter->getScreenWidth())
+    // if (_measureData.size() < pointsAdapter->getScreenWidth())
         pointsAdapter = QSharedPointer<BasePointsAdapter>::create();
-    else
-        pointsAdapter = QSharedPointer<AveragePointsAdapter>::create();
+    // else
+    //     pointsAdapter = QSharedPointer<AveragePointsAdapter>::create();
 
-    const auto& resultPoints { pointsAdapter->convertToPoints(_measureData) };
+    auto resultPoints { pointsAdapter->convertToPoints(_measureData) };
     qInfo() << "Points count: " << resultPoints.size();
+    QPair<QPointF, QPointF> borderPoints;
     if (resultPoints.size() > 0)
     {
-        QPair<QPointF, QPointF> borderPoints { QPointF(resultPoints[0].x(), resultPoints[0].y()),
-                                               QPointF(resultPoints[0].x(), resultPoints[0].y())};
+        borderPoints = qMakePair(QPointF(resultPoints[0].x(), resultPoints[0].y()),
+                                 QPointF(resultPoints[0].x(), resultPoints[0].y()));
         for (const auto& point : resultPoints)
         {
             if (point.x() > borderPoints.first.x()) borderPoints.first.setX(point.x());
@@ -88,6 +89,16 @@ QVector<QPointF> DataCollector::getPoints(const QVector<MeasureData> &_measureDa
         }
         emit s_setMaxMinXY(borderPoints);
     }
+
+
+    // for (auto& el : resultPoints)
+    // {
+    //     double dYPer = (el.y() - borderPoints.second.y()) / (borderPoints.first.y() - borderPoints.second.y())  * 300.0d;
+    //     double dXPer = (el.x() - borderPoints.second.x()) / (borderPoints.first.x() - borderPoints.second.x())  * 1000.0d + 50;
+
+    //     el.setX(dXPer);
+    //     el.setY(dYPer);
+    // }
 
     return resultPoints;
 }

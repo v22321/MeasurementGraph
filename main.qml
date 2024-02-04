@@ -2,7 +2,8 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 2.15
-import QtCharts 2.15
+import MyNamespace 1.0
+// import QtCharts 2.15
 
 Window {
     id: window
@@ -24,7 +25,7 @@ Window {
             selectFileBtn.enabled = true
         }
 
-        function onS_graphUpdated() {
+        function onS_graphUpdated(el) {
             console.log("Graph updated")
             selectFileBtn.enabled = true
         }
@@ -94,37 +95,69 @@ Window {
             }
         }
 
-        ChartView {
-            id: chartView
+        Graph {
+            id: graph
             Layout.fillHeight: true
             Layout.fillWidth: true
+            // width: 600
+            // height: 400
 
-            Component.onCompleted: {
-                if (Qt.isQtObject(seriesMapper))
-                    seriesMapper.series = lineSeries
+            Connections {
+                target: wrapper
+
+                function onS_graphUpdated(el)
+                {
+                    console.warn(">>>>>>>>++++")
+                    graph.updateData(el);
+                }
+
+                function onS_setMaxMinPoints(el)
+                {
+                    console.warn("<< << << << <<")
+                    graph.setBorders(el);
+                }
             }
 
-            LineSeries {
-                id: lineSeries
-                name: qsTr("Measurement results")
-                axisX: customAxisX
-                axisY: customAxisY
-            }
-
-            ValueAxis {
-                id: customAxisX
-                tickCount: 10
-                min: Qt.isQtObject(graphData) ? graphData.minX : 0
-                max: Qt.isQtObject(graphData) ? graphData.maxX : 0
-            }
-
-            ValueAxis {
-                id: customAxisY
-                tickCount: 10
-                min: Qt.isQtObject(graphData) ? graphData.minY : 0
-                max: Qt.isQtObject(graphData) ? graphData.maxY : 0
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    // Вызываем обновление данных при клике
+                    console.log("AAA")
+                    // graph.updateData();
+                }
             }
         }
+        // ChartView {
+        //     id: chartView
+        //     Layout.fillHeight: true
+        //     Layout.fillWidth: true
+
+        //     Component.onCompleted: {
+        //         if (Qt.isQtObject(seriesMapper))
+        //             seriesMapper.series = lineSeries
+        //     }
+
+        //     LineSeries {
+        //         id: lineSeries
+        //         name: qsTr("Measurement results")
+        //         axisX: customAxisX
+        //         axisY: customAxisY
+        //     }
+
+        //     ValueAxis {
+        //         id: customAxisX
+        //         tickCount: 10
+        //         min: Qt.isQtObject(graphData) ? graphData.minX : 0
+        //         max: Qt.isQtObject(graphData) ? graphData.maxX : 0
+        //     }
+
+        //     ValueAxis {
+        //         id: customAxisY
+        //         tickCount: 10
+        //         min: Qt.isQtObject(graphData) ? graphData.minY : 0
+        //         max: Qt.isQtObject(graphData) ? graphData.maxY : 0
+        //     }
+        // }
 
         Rectangle {
             Layout.fillWidth: true

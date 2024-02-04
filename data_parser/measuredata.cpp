@@ -1,14 +1,14 @@
 #include "measuredata.h"
 #include <QDebug>
 
-MeasureData::MeasureData(const double _timeStamp, const double _value)
+MeasureData::MeasureData(const long double _timeStamp, const long double _value)
     : m_timeStamp(_timeStamp), m_value(_value)
 {}
 
 void MeasureData::printAll() const
 {
     qInfo() << "===";
-    qInfo() << "Time stamp: " << m_timeStamp << ", value: " << m_value;
+    // qInfo() << "Time stamp: " << m_timeStamp << ", value: " << m_value;
     qInfo() << "===";
 }
 

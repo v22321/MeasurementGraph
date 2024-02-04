@@ -10,7 +10,7 @@ QVector<QPointF> AveragePointsAdapter::convertToPoints(const QVector<MeasureData
     const auto& screenWidth { getScreenWidth() };
     const size_t stepSize { measureDataSize > screenWidth ? measureDataSize / screenWidth : 1 };
 
-    double averageValue { 0.0 };
+    long double averageValue { 0.0 };
     uint32_t stepNumber { 1 };
     for (size_t index = 0; index < measureDataSize; ++index)
     {

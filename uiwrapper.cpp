@@ -11,6 +11,7 @@ UIWrapper::UIWrapper(QObject *parent) :
     m_seriesMapper(QSharedPointer<QVXYModelMapper>::create()),
     m_collector(QSharedPointer<DataCollector>::create()),
     m_collectorThread(QSharedPointer<QThread>::create())
+    // m(std::vector<QFutureWatcher<bool>>(7))
 {
     /// Get files from custom dir
     QString filesDir { QString("%1%2%3").arg(QCoreApplication::applicationDirPath(),
@@ -50,22 +51,23 @@ void UIWrapper::init(QQmlContext *_context)
     _context->setContextProperty("graphData", m_graphData.data());
 }
 
-bool UIWrapper::updateGraph(const QVector<QPointF>& _points)
+bool UIWrapper::updateGraph(QVector<QPointF> _points)
 {
     if (!m_graphData || !m_seriesMapper)
     {
         qWarning() << "Not found models: graph data or series mapper. Can't update graph";
         return true;
     }
+    m_points.reset(new QVector<QPointF>(_points));
     /// Set graph data
-    m_graphData->resetPoints(_points);
+    // m_graphData->resetPoints(_points);
 
-    m_seriesMapper->setXColumn(0);
-    m_seriesMapper->setYColumn(1);
-    qInfo() << ">>>";
-    m_seriesMapper->setModel(m_graphData.data());
-    qInfo() << "<<<";
-    emit s_graphUpdated();
+    // m_seriesMapper->setXColumn(0);
+    // m_seriesMapper->setYColumn(1);
+    // qInfo() << ">>>";
+    // m_seriesMapper->setModel(m_graphData.data());
+    // qInfo() << "<<<";
+    emit s_graphUpdated(m_points);
 
     return false;
 }
@@ -78,7 +80,8 @@ void UIWrapper::updateMaxMinXY(const QPair<QPointF, QPointF> &_maxMinXYPair)
         return;
     }
 
-    m_graphData->setMaxMinPoints(_maxMinXYPair);
+    // m_graphData->setMaxMinPoints(_maxMinXYPair);
+    emit s_setMaxMinPoints(_maxMinXYPair);
 }
 
 void UIWrapper::setNewHeaders(const QVector<Header> &_headers)
