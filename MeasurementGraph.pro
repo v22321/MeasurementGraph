@@ -13,7 +13,7 @@ SOURCES += \
         graph/averagepointsadapter.cpp \
         graph/basepointsadapter.cpp \
         graph/graphmodel.cpp \
-        graph.cpp \
+        graphpainter.cpp \
         main.cpp \
         uiwrapper.cpp
 
@@ -36,10 +36,10 @@ HEADERS += \
     data_parser/measuredata.h \
     data_parser/ssddatareader.h \
     datacollector.h \
-    graph.h \
     defines.h \
     graph/averagepointsadapter.h \
     graph/basepointsadapter.h \
     graph/graphmodel.h \
     graph/ipointsadapter.h \
+    graphpainter.h \
     uiwrapper.h

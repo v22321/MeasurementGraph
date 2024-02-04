@@ -60,6 +60,7 @@ bool UIWrapper::updateGraph(QVector<QPointF> _points)
     }
     m_points.reset(new QVector<QPointF>(_points));
     /// Set graph data
+    emit s_graphUpdated(m_points);
     // m_graphData->resetPoints(_points);
 
     // m_seriesMapper->setXColumn(0);
@@ -67,7 +68,6 @@ bool UIWrapper::updateGraph(QVector<QPointF> _points)
     // qInfo() << ">>>";
     // m_seriesMapper->setModel(m_graphData.data());
     // qInfo() << "<<<";
-    emit s_graphUpdated(m_points);
 
     return false;
 }

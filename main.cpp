@@ -3,7 +3,7 @@
 #include <QQmlContext>
 
 #include "uiwrapper.h"
-#include "graph.h"
+#include "graphpainter.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,10 +15,9 @@ int main(int argc, char *argv[])
 
     UIWrapper uiWrapper;
     uiWrapper.init(engine.rootContext());
-    qInfo() << "NEXT >>>>>>>>>";
     // uiWrapper.createGraph();
 
-    qmlRegisterType<Graph>("MyNamespace", 1, 0, "Graph");
+    qmlRegisterType<GraphPainter>("MyNamespace", 1, 0, "GraphPainter");
     qRegisterMetaType< QSharedPointer<QVector<QPointF>> >("QSharedPointer<QVector<QPointF>>");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));

@@ -90,15 +90,5 @@ QVector<QPointF> DataCollector::getPoints(const QVector<MeasureData> &_measureDa
         emit s_setMaxMinXY(borderPoints);
     }
 
-
-    // for (auto& el : resultPoints)
-    // {
-    //     double dYPer = (el.y() - borderPoints.second.y()) / (borderPoints.first.y() - borderPoints.second.y())  * 300.0d;
-    //     double dXPer = (el.x() - borderPoints.second.x()) / (borderPoints.first.x() - borderPoints.second.x())  * 1000.0d + 50;
-
-    //     el.setX(dXPer);
-    //     el.setY(dYPer);
-    // }
-
     return resultPoints;
 }

@@ -47,50 +47,50 @@ QVariant GraphModel::data(const QModelIndex &index, int role) const
 }
 
 
-void GraphModel::setMaxY(const long double _maxY)
+void GraphModel::setMaxY(const double _maxY)
 {
     if (m_maxY == _maxY) return;
     m_maxY = _maxY;
     emit borderChanged();
 }
 
-long double GraphModel::maxY() const
+double GraphModel::maxY() const
 {
     return m_maxY;
 }
 
-void GraphModel::setMaxX(const long double _maxX)
+void GraphModel::setMaxX(const double _maxX)
 {
     if (m_maxX == _maxX) return;
     m_maxX = _maxX;
     emit borderChanged();
 }
 
-long double GraphModel::maxX() const
+double GraphModel::maxX() const
 {
     return m_maxX;
 }
 
-void GraphModel::setMinY(const long double _minY)
+void GraphModel::setMinY(const double _minY)
 {
     if (m_minY == _minY) return;
     m_minY = _minY;
     emit borderChanged();
 }
 
-long double GraphModel::minY() const
+double GraphModel::minY() const
 {
     return m_minY;
 }
 
-void GraphModel::setMinX(const long double _minX)
+void GraphModel::setMinX(const double _minX)
 {
     if (m_minX == _minX) return;
     m_minX = _minX;
     emit borderChanged();
 }
 
-long double GraphModel::minX() const
+double GraphModel::minX() const
 {
     return m_minX;
 }

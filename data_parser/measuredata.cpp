@@ -1,7 +1,7 @@
 #include "measuredata.h"
 #include <QDebug>
 
-MeasureData::MeasureData(const long double _timeStamp, const long double _value)
+MeasureData::MeasureData(const double _timeStamp, const double _value)
     : m_timeStamp(_timeStamp), m_value(_value)
 {}
 

@@ -52,7 +52,7 @@ signals:
     void s_createGraph(const QString& _fileName);
 
     void s_hasError();
-    void s_graphUpdated(QSharedPointer<QVector<QPointF>> _points);
+    void s_graphUpdated(const QSharedPointer<QVector<QPointF>>& _points);
     void s_setMaxMinPoints(const QPair<QPointF, QPointF>& _maxMinXYPair);
 };
 

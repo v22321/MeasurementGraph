@@ -14,10 +14,10 @@ class GraphModel : public QAbstractTableModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(long double maxY READ maxY NOTIFY borderChanged)
-    Q_PROPERTY(long double maxX READ maxX NOTIFY borderChanged)
-    Q_PROPERTY(long double minY READ minY NOTIFY borderChanged)
-    Q_PROPERTY(long double minX READ minX NOTIFY borderChanged)
+    Q_PROPERTY(double maxY READ maxY NOTIFY borderChanged)
+    Q_PROPERTY(double maxX READ maxX NOTIFY borderChanged)
+    Q_PROPERTY(double minY READ minY NOTIFY borderChanged)
+    Q_PROPERTY(double minX READ minX NOTIFY borderChanged)
     Q_PROPERTY(QString measurementInfo READ measurementInfo NOTIFY measurementInfoChanged)
 
 public:
@@ -30,14 +30,14 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
     // Setters and getters
-    void setMaxY(const long double _maxY);
-    long double maxY() const;
-    void setMaxX(const long double _maxX);
-    long double maxX() const;
-    void setMinY(const long double _minY);
-    long double minY() const;
-    void setMinX(const long double _minX);
-    long double minX() const;
+    void setMaxY(const double _maxY);
+    double maxY() const;
+    void setMaxX(const double _maxX);
+    double maxX() const;
+    void setMinY(const double _minY);
+    double minY() const;
+    void setMinX(const double _minX);
+    double minX() const;
 
     QString measurementInfo();
     void addInformation(const QVector<Header>& _headers);
@@ -50,10 +50,10 @@ private:
     QVector<Header> m_headers;
 
     QStringList m_fileList;
-    long double m_maxY;
-    long double m_minY;
-    long double m_maxX;
-    long double m_minX;
+    double m_maxY;
+    double m_minY;
+    double m_maxX;
+    double m_minX;
 
 signals:
     void newPointAdded(const QPointF& point);

@@ -28,8 +28,8 @@ bool SsdDataReader::parseLines(QFile& _file)
 
         /// Fill measurement results
         std::istringstream strStream(lineStr.toStdString());
-        long double currentNumber;
-        QVector<long double> currentMeasurements;
+        double currentNumber;
+        QVector<double> currentMeasurements;
         while (strStream >> currentNumber)
         {
             currentMeasurements.emplace_back(currentNumber);

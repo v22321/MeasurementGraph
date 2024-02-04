@@ -26,8 +26,8 @@ Window {
         }
 
         function onS_graphUpdated(el) {
-            console.log("Graph updated")
-            selectFileBtn.enabled = true
+            // console.log("Graph updated")
+            // selectFileBtn.enabled = true
         }
     }
 
@@ -95,35 +95,27 @@ Window {
             }
         }
 
-        Graph {
+        GraphPainter {
             id: graph
             Layout.fillHeight: true
             Layout.fillWidth: true
-            // width: 600
-            // height: 400
+
+            onS_graphUpdated: {
+                console.log("Graph updated")
+                selectFileBtn.enabled = true
+            }
 
             Connections {
                 target: wrapper
 
-                function onS_graphUpdated(el)
+                function onS_graphUpdated(points)
                 {
-                    console.warn(">>>>>>>>++++")
-                    graph.updateData(el);
+                    graph.updateData(points);
                 }
 
-                function onS_setMaxMinPoints(el)
+                function onS_setMaxMinPoints(maxMinValues)
                 {
-                    console.warn("<< << << << <<")
-                    graph.setBorders(el);
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    // Вызываем обновление данных при клике
-                    console.log("AAA")
-                    // graph.updateData();
+                    graph.setMaxMinValues(maxMinValues);
                 }
             }
         }
