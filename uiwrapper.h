@@ -30,7 +30,7 @@ private:
     /// \param _points
     /// \return
     ///
-    bool updateGraph(QVector<QPointF> _points);
+    bool updateGraph(const QSharedPointer<QVector<QPointF>>& _points);
     void updateMaxMinXY(const QPair<QPointF, QPointF>& _maxMinXYPair);
     void setNewHeaders(const QVector<Header>& _headers);
 
@@ -45,15 +45,15 @@ private:
     QSharedPointer<DataCollector> m_collector;
     QSharedPointer<QThread> m_collectorThread;
 
-    QSharedPointer<QVector<QPointF>> m_points;
-
 signals:
-    /// Start create graph
+    /// Start to get points for sgraph
     void s_createGraph(const QString& _fileName);
 
-    void s_hasError();
+    /// Points are ready, load to graph
     void s_graphUpdated(const QSharedPointer<QVector<QPointF>>& _points);
     void s_setMaxMinPoints(const QPair<QPointF, QPointF>& _maxMinXYPair);
+
+    void s_hasError();
 };
 
 #endif // UIWRAPPER_H

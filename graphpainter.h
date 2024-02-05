@@ -11,10 +11,10 @@ class GraphPainter : public QQuickPaintedItem
 
     const qint32 GRAPH_PARALLEL_MIN_POINTS {1'000};
 
-    const qint32 GRAPH_LEFT_MARGIN {150};
-    const qint32 GRAPH_RIGHT_MARGIN {GRAPH_LEFT_MARGIN / 3};
-    const qint32 GRAPH_BOTTOM_MARGIN {50};
-    const qint32 GRAPH_TOP_MARGIN {GRAPH_BOTTOM_MARGIN};
+    const qreal GRAPH_LEFT_MARGIN {150.};
+    const qreal GRAPH_RIGHT_MARGIN {GRAPH_LEFT_MARGIN / 3};
+    const qreal GRAPH_BOTTOM_MARGIN {50.};
+    const qreal GRAPH_TOP_MARGIN {GRAPH_BOTTOM_MARGIN};
 
     const qint32 GRAPH_DIV_X {8};
     const qint32 GRAPH_DIV_Y {10};
@@ -26,18 +26,20 @@ public:
     void graphSizeChangedHandle();
 
 public slots:
+    /// Update current graph with new _points
     void updateData(const QSharedPointer<QVector<QPointF>>& _points);
+    /// Set max and min points (QPair< MAX point, MIN point >)
     void setMaxMinValues(const QPair<QPointF, QPointF>& _maxMinXYPair);
 
 private:
     QSharedPointer<QVector<QPointF>> m_points;
-    QVector<QSharedPointer<QFutureWatcher<size_t>>> m_watchers;
+    QVector<QSharedPointer<QFutureWatcher<qsizetype>>> m_watchers;
     qint32 m_watchersReadyCount;
 
-    double m_deltaX;
-    double m_deltaY;
-    double m_minX;
-    double m_minY;
+    qreal m_deltaX;
+    qreal m_deltaY;
+    qreal m_minX;
+    qreal m_minY;
 
 signals:
     void s_graphUpdated();

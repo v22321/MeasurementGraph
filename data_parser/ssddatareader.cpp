@@ -9,7 +9,6 @@ bool SsdDataReader::parseLines(QFile& _file)
     if (!_file.isOpen())
         return true;
 
-    int i = 0;
     while (!_file.atEnd())
     {
         QString lineStr { QString::fromUtf8(_file.readLine()) };
@@ -28,8 +27,8 @@ bool SsdDataReader::parseLines(QFile& _file)
 
         /// Fill measurement results
         std::istringstream strStream(lineStr.toStdString());
-        double currentNumber;
-        QVector<double> currentMeasurements;
+        qreal currentNumber;
+        QVector<qreal> currentMeasurements;
         while (strStream >> currentNumber)
         {
             currentMeasurements.emplace_back(currentNumber);

@@ -6,14 +6,14 @@
 class MeasureData
 {
 public:
-    MeasureData(const double _timeStamp, const double _value);
+    MeasureData(const qreal _timeStamp, const qreal _value);
 
     void printAll() const;
     QPointF getPoint() const;
 
 private:
-    double m_timeStamp;
-    double m_value;
+    qreal m_timeStamp;
+    qreal m_value;
 };
 
 #endif // MEASUREDATA_H

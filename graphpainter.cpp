@@ -2,18 +2,26 @@
 
 GraphPainter::GraphPainter(QQuickItem* _parent)
     : QQuickPaintedItem(_parent),
-      m_watchersReadyCount(0)
+      m_watchersReadyCount(0),
+      m_deltaX(0.0),
+      m_deltaY(0.0),
+      m_minX(0.0),
+      m_minY(0.0)
 {
     m_points = QSharedPointer<QVector<QPointF>>::create();
-    m_watchers.reserve(QThread::idealThreadCount() - 1);
-    for (qint32 threadNum {0}; threadNum < QThread::idealThreadCount() - 1; ++threadNum)
-    {
-        m_watchers.emplace_back(QSharedPointer<QFutureWatcher<size_t>>::create());
 
-        auto currentWatcher = m_watchers[threadNum];
+    const auto currentThreadCount { QThread::idealThreadCount() > 1
+                                    ? QThread::idealThreadCount() - 1
+                                    : 1 };
+    m_watchers.reserve(currentThreadCount);
+    for (qint32 watcherNum {0}; watcherNum < currentThreadCount; ++watcherNum)
+    {
+        m_watchers.emplace_back(QSharedPointer<QFutureWatcher<qsizetype>>::create());
+
+        auto currentWatcher = m_watchers[watcherNum];
         connect (currentWatcher.data(), &QFutureWatcher<void>::finished, this, [this, currentWatcher]()
         {
-            qInfo() << "Result: " << currentWatcher->result();
+            qInfo() << "Number of loading points: " << currentWatcher->result();
             update();
             if (--m_watchersReadyCount == 0)
                 emit s_graphUpdated();
@@ -38,9 +46,9 @@ void GraphPainter::paint(QPainter* _painter)
     for (qint32 i {0}; i <= GRAPH_DIV_Y; ++i)
     {
         _painter->drawText(QRectF(GRAPH_LEFT_MARGIN - 132,
-                                 height() - GRAPH_BOTTOM_MARGIN - 8 - i * divYVal,
+                                 height() - GRAPH_BOTTOM_MARGIN - i * divYVal - 8,
                                  GRAPH_LEFT_MARGIN - 12,
-                                 height() - GRAPH_BOTTOM_MARGIN + 4 - i * divYVal),
+                                 height() - GRAPH_BOTTOM_MARGIN - i * divYVal + 4),
                           QString::number(m_minY + m_deltaY / (height() - GRAPH_BOTTOM_MARGIN - GRAPH_TOP_MARGIN) * i * divYVal,
                                           'e', 8));
     }
@@ -80,31 +88,31 @@ void GraphPainter::updateData(const QSharedPointer<QVector<QPointF>>& _points)
 
     m_points->resize(_points->size());
 
-    const size_t currentWatchersCount { _points->size() < GRAPH_PARALLEL_MIN_POINTS
-                                  ? 1 : m_watchers.size()};
+    const qsizetype currentWatchersCount { _points->size() < GRAPH_PARALLEL_MIN_POINTS
+                                        ? 1 : m_watchers.size()};
     m_watchersReadyCount = currentWatchersCount;
-    for (size_t num {0}; num < currentWatchersCount; ++num)
+    for (qsizetype num {0}; num < currentWatchersCount; ++num)
     {
-        QFuture<size_t> future = QtConcurrent::run([this, _points, currentWatchersCount](size_t _watcherNumber) -> size_t {
+        QFuture<qsizetype> future = QtConcurrent::run([this, _points, currentWatchersCount](qsizetype _watcherNumber) -> qsizetype {
             if (!_points || !m_points || _points->size() != m_points->size())
             {
                 qInfo() << "Get error in points copying";
-                return -1;
+                return 0;
             }
 
-            size_t watcherPoints { _points->size() / currentWatchersCount };
-            size_t copyIndexStart { _watcherNumber * watcherPoints };
-            size_t copyIndexStop  { _watcherNumber < currentWatchersCount - 1
+            qsizetype watcherPoints { _points->size() / currentWatchersCount };
+            qsizetype copyStartIndex { _watcherNumber * watcherPoints };
+            qsizetype copyStopIndex  { _watcherNumber < currentWatchersCount - 1
                                     ? (_watcherNumber + 1) * watcherPoints
                                     : _points->size()
                                   };
 
-            for (size_t i {copyIndexStart}; i < copyIndexStop; ++i)
+            for (qsizetype i {copyStartIndex}; i < copyStopIndex; ++i)
             {
-                double currentY = height() - GRAPH_BOTTOM_MARGIN
+                auto currentY = height() - GRAPH_BOTTOM_MARGIN
                                   - (_points->at(i).y() - m_minY) / m_deltaY
                                     * (height() - GRAPH_BOTTOM_MARGIN - GRAPH_TOP_MARGIN);
-                double currentX = GRAPH_LEFT_MARGIN
+                auto currentX = GRAPH_LEFT_MARGIN
                                   + (_points->at(i).x() - m_minX) / m_deltaX
                                     * (width() - GRAPH_LEFT_MARGIN - GRAPH_RIGHT_MARGIN);
 
@@ -112,7 +120,7 @@ void GraphPainter::updateData(const QSharedPointer<QVector<QPointF>>& _points)
                 (*m_points)[i].setY(currentY);
             }
 
-            return copyIndexStop;
+            return copyStopIndex;
         }, num);
 
         auto currentWatcher = m_watchers[num];

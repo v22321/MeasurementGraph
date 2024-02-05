@@ -24,7 +24,7 @@ private:
     QVector<QPointF> getPoints(const QVector<MeasureData>& _measureData);
 
 signals:
-    void s_pointsReady(QVector<QPointF> _points);
+    void s_pointsReady(const QSharedPointer<QVector<QPointF>>& _points);
     void s_newHeaders(const QVector<Header>& _headers);
     void s_hasError();
     void s_setMaxMinXY(const QPair<QPointF, QPointF>&);

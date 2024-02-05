@@ -1,7 +1,7 @@
 #include "graphmodel.h"
 
 GraphModel::GraphModel()
-    : m_fileList(""), m_maxY(0.), m_maxX(0.), m_minY(0.), m_minX(0.)
+    : m_fileList(""), m_maxY(0.), m_minY(0.), m_maxX(0.), m_minX(0.)
 {}
 
 void GraphModel::setMaxMinPoints(const QPair<QPointF, QPointF>& _maxMinXYPair)
@@ -47,50 +47,50 @@ QVariant GraphModel::data(const QModelIndex &index, int role) const
 }
 
 
-void GraphModel::setMaxY(const double _maxY)
+void GraphModel::setMaxY(const qreal _maxY)
 {
     if (m_maxY == _maxY) return;
     m_maxY = _maxY;
     emit borderChanged();
 }
 
-double GraphModel::maxY() const
+qreal GraphModel::maxY() const
 {
     return m_maxY;
 }
 
-void GraphModel::setMaxX(const double _maxX)
+void GraphModel::setMaxX(const qreal _maxX)
 {
     if (m_maxX == _maxX) return;
     m_maxX = _maxX;
     emit borderChanged();
 }
 
-double GraphModel::maxX() const
+qreal GraphModel::maxX() const
 {
     return m_maxX;
 }
 
-void GraphModel::setMinY(const double _minY)
+void GraphModel::setMinY(const qreal _minY)
 {
     if (m_minY == _minY) return;
     m_minY = _minY;
     emit borderChanged();
 }
 
-double GraphModel::minY() const
+qreal GraphModel::minY() const
 {
     return m_minY;
 }
 
-void GraphModel::setMinX(const double _minX)
+void GraphModel::setMinX(const qreal _minX)
 {
     if (m_minX == _minX) return;
     m_minX = _minX;
     emit borderChanged();
 }
 
-double GraphModel::minX() const
+qreal GraphModel::minX() const
 {
     return m_minX;
 }

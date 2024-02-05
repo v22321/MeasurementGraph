@@ -11,7 +11,6 @@ UIWrapper::UIWrapper(QObject *parent) :
     m_seriesMapper(QSharedPointer<QVXYModelMapper>::create()),
     m_collector(QSharedPointer<DataCollector>::create()),
     m_collectorThread(QSharedPointer<QThread>::create())
-    // m(std::vector<QFutureWatcher<bool>>(7))
 {
     /// Get files from custom dir
     QString filesDir { QString("%1%2%3").arg(QCoreApplication::applicationDirPath(),
@@ -51,23 +50,19 @@ void UIWrapper::init(QQmlContext *_context)
     _context->setContextProperty("graphData", m_graphData.data());
 }
 
-bool UIWrapper::updateGraph(QVector<QPointF> _points)
+bool UIWrapper::updateGraph(const QSharedPointer<QVector<QPointF>>& _points)
 {
-    if (!m_graphData || !m_seriesMapper)
+    if (!m_graphData || !m_seriesMapper || !_points)
     {
         qWarning() << "Not found models: graph data or series mapper. Can't update graph";
         return true;
     }
-    m_points.reset(new QVector<QPointF>(_points));
     /// Set graph data
-    emit s_graphUpdated(m_points);
-    // m_graphData->resetPoints(_points);
+    emit s_graphUpdated(_points);
 
     // m_seriesMapper->setXColumn(0);
     // m_seriesMapper->setYColumn(1);
-    // qInfo() << ">>>";
     // m_seriesMapper->setModel(m_graphData.data());
-    // qInfo() << "<<<";
 
     return false;
 }

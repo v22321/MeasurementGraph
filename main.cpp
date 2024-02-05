@@ -17,8 +17,7 @@ int main(int argc, char *argv[])
     uiWrapper.init(engine.rootContext());
     // uiWrapper.createGraph();
 
-    qmlRegisterType<GraphPainter>("MyNamespace", 1, 0, "GraphPainter");
-    qRegisterMetaType< QSharedPointer<QVector<QPointF>> >("QSharedPointer<QVector<QPointF>>");
+    qmlRegisterType<GraphPainter>("CustomGraph", 1, 0, "GraphPainter");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(

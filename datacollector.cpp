@@ -29,8 +29,10 @@ void DataCollector::collect(const QString &_fileName)
     /// update headers
     emit s_newHeaders(dataReader->headers());
 
+    QSharedPointer<QVector<QPointF>> finalPoints(new QVector<QPointF>(getPoints(dataReader->measurements())));
+
     /// convert data to points
-    emit s_pointsReady(getPoints(dataReader->measurements()));
+    emit s_pointsReady(finalPoints);
 }
 
 QSharedPointer<AbstractDataReader> DataCollector::parseFile(const QString &_fileName)

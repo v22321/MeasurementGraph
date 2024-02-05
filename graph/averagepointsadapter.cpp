@@ -5,14 +5,14 @@ AveragePointsAdapter::AveragePointsAdapter() {}
 QVector<QPointF> AveragePointsAdapter::convertToPoints(const QVector<MeasureData> &_measureData)
 {
     QVector<QPointF> resultPoints {};
-    const size_t measureDataSize { _measureData.size() };
+    const qsizetype measureDataSize { _measureData.size() };
     /// If we have many points, we need to calculate the average
     const auto& screenWidth { getScreenWidth() };
-    const size_t stepSize { measureDataSize > screenWidth ? measureDataSize / screenWidth : 1 };
+    const qsizetype stepSize { measureDataSize > screenWidth ? measureDataSize / screenWidth : 1 };
 
-    double averageValue { 0.0 };
+    qreal averageValue { 0.0 };
     uint32_t stepNumber { 1 };
-    for (size_t index = 0; index < measureDataSize; ++index)
+    for (qsizetype index = 0; index < measureDataSize; ++index)
     {
         QPointF currPoint { _measureData[index].getPoint() };
         /// If we have many points, we need to calculate the average
