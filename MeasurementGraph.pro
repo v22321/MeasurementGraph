@@ -1,4 +1,4 @@
-QT += quick charts concurrent core-private
+QT += quick concurrent
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

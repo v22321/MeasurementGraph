@@ -8,7 +8,7 @@
 UIWrapper::UIWrapper(QObject *parent) :
     QObject(parent),
     m_graphData(QSharedPointer<GraphModel>::create()),
-    m_seriesMapper(QSharedPointer<QVXYModelMapper>::create()),
+    // m_seriesMapper(QSharedPointer<QVXYModelMapper>::create()),
     m_collector(QSharedPointer<DataCollector>::create()),
     m_collectorThread(QSharedPointer<QThread>::create())
 {
@@ -46,13 +46,13 @@ void UIWrapper::init(QQmlContext *_context)
         return;
 
     _context->setContextProperty("wrapper", this);
-    _context->setContextProperty("seriesMapper", m_seriesMapper.data());
+    // _context->setContextProperty("seriesMapper", m_seriesMapper.data());
     _context->setContextProperty("graphData", m_graphData.data());
 }
 
 bool UIWrapper::updateGraph(const QSharedPointer<QVector<QPointF>>& _points)
 {
-    if (!m_graphData || !m_seriesMapper || !_points)
+    if (!m_graphData || !_points)
     {
         qWarning() << "Not found models: graph data or series mapper. Can't update graph";
         return true;

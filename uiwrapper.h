@@ -39,7 +39,7 @@ private:
 private:
     QStringList m_dataFiles;
     QSharedPointer<GraphModel> m_graphData;
-    QSharedPointer<QVXYModelMapper> m_seriesMapper;
+    // QSharedPointer<QVXYModelMapper> m_seriesMapper;
 
     /// Collector measurement data from file in thread
     QSharedPointer<DataCollector> m_collector;
