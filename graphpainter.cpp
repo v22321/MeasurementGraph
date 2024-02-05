@@ -4,6 +4,7 @@ GraphPainter::GraphPainter(QQuickItem* _parent)
     : QQuickPaintedItem(_parent),
       m_watchersReadyCount(0)
 {
+    m_points = QSharedPointer<QVector<QPointF>>::create();
     m_watchers.reserve(QThread::idealThreadCount() - 1);
     for (qint32 threadNum {0}; threadNum < QThread::idealThreadCount() - 1; ++threadNum)
     {
@@ -14,7 +15,7 @@ GraphPainter::GraphPainter(QQuickItem* _parent)
         {
             qInfo() << "Result: " << currentWatcher->result();
             update();
-            if (++m_watchersReadyCount == QThread::idealThreadCount() - 1)
+            if (--m_watchersReadyCount == 0)
                 emit s_graphUpdated();
         });
     }
@@ -44,7 +45,7 @@ void GraphPainter::paint(QPainter* _painter)
                                           'e', 8));
     }
 
-    auto divXVal { (width() - GRAPH_BOTTOM_MARGIN - GRAPH_TOP_MARGIN) / GRAPH_DIV_X };
+    auto divXVal { (width() - GRAPH_LEFT_MARGIN - GRAPH_RIGHT_MARGIN) / GRAPH_DIV_X };
     for (qint32 i {0}; i <= GRAPH_DIV_X; ++i)
     {
         _painter->drawText(QRectF(GRAPH_LEFT_MARGIN + i * divXVal - 24,
@@ -57,17 +58,17 @@ void GraphPainter::paint(QPainter* _painter)
 
     // paint points ans lines
     _painter->setPen(QPen(Qt::blue, 3));
-    _painter->drawPoints(m_points.data(), m_points.size());
+    _painter->drawPoints(m_points->data(), m_points->size());
 
     _painter->setPen(QPen(Qt::blue, 1));
-    _painter->drawPolyline(m_points.data(), m_points.size());
+    _painter->drawPolyline(m_points->data(), m_points->size());
 }
 
 void GraphPainter::graphSizeChangedHandle()
 {
-    if (m_points.size() > 0)
+    if (m_points->size() > 0)
     {
-        m_points.clear();
+        m_points->clear();
         update();
     }
 }
@@ -77,32 +78,38 @@ void GraphPainter::updateData(const QSharedPointer<QVector<QPointF>>& _points)
     if (!_points)
         return;
 
-    m_points.resize(_points->size());
-    m_watchersReadyCount = 0;
+    m_points->resize(_points->size());
 
-    for (size_t num {0}; num < m_watchers.size(); ++num)
+    const size_t currentWatchersCount { _points->size() < GRAPH_PARALLEL_MIN_POINTS
+                                  ? 1 : m_watchers.size()};
+    m_watchersReadyCount = currentWatchersCount;
+    for (size_t num {0}; num < currentWatchersCount; ++num)
     {
-        QFuture<size_t> future = QtConcurrent::run([this, _points](size_t _watcherNumber) -> size_t {
-            if (!_points || _points->size() == 0)
+        QFuture<size_t> future = QtConcurrent::run([this, _points, currentWatchersCount](size_t _watcherNumber) -> size_t {
+            if (!_points || !m_points || _points->size() != m_points->size())
             {
-                qInfo() << "Empty point list";
+                qInfo() << "Get error in points copying";
                 return -1;
             }
 
-            size_t watcherPoints { _points->size() / m_watchers.size() };
+            size_t watcherPoints { _points->size() / currentWatchersCount };
             size_t copyIndexStart { _watcherNumber * watcherPoints };
-            size_t copyIndexStop  { _watcherNumber < m_watchers.size() - 1
+            size_t copyIndexStop  { _watcherNumber < currentWatchersCount - 1
                                     ? (_watcherNumber + 1) * watcherPoints
                                     : _points->size()
                                   };
 
             for (size_t i {copyIndexStart}; i < copyIndexStop; ++i)
             {
-                double currentY = height() - GRAPH_BOTTOM_MARGIN - (_points->at(i).y() - m_minY) / m_deltaY  * (height() - GRAPH_BOTTOM_MARGIN - GRAPH_TOP_MARGIN);
-                double currentX = (_points->at(i).x() - m_minX) / m_deltaX  * (width() - GRAPH_LEFT_MARGIN - GRAPH_RIGHT_MARGIN) + GRAPH_LEFT_MARGIN;
+                double currentY = height() - GRAPH_BOTTOM_MARGIN
+                                  - (_points->at(i).y() - m_minY) / m_deltaY
+                                    * (height() - GRAPH_BOTTOM_MARGIN - GRAPH_TOP_MARGIN);
+                double currentX = GRAPH_LEFT_MARGIN
+                                  + (_points->at(i).x() - m_minX) / m_deltaX
+                                    * (width() - GRAPH_LEFT_MARGIN - GRAPH_RIGHT_MARGIN);
 
-                m_points[i].setX(currentX);
-                m_points[i].setY(currentY);
+                (*m_points)[i].setX(currentX);
+                (*m_points)[i].setY(currentY);
             }
 
             return copyIndexStop;
@@ -122,6 +129,7 @@ void GraphPainter::setMaxMinValues(const QPair<QPointF, QPointF>& _maxMinXYPair)
 
     m_minX = _maxMinXYPair.second.x();
     m_minY = _maxMinXYPair.second.y();
+
     qInfo() << "Fetch max and min values";
     qInfo() << "MIN: X " << m_minX << "\t Y " << m_minY;
     qInfo() << "MAX: X " << _maxMinXYPair.first.x() << "\t Y " << _maxMinXYPair.first.y();

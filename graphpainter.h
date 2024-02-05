@@ -9,12 +9,14 @@ class GraphPainter : public QQuickPaintedItem
 {
     Q_OBJECT
 
+    const qint32 GRAPH_PARALLEL_MIN_POINTS {1'000};
+
     const qint32 GRAPH_LEFT_MARGIN {150};
     const qint32 GRAPH_RIGHT_MARGIN {GRAPH_LEFT_MARGIN / 3};
     const qint32 GRAPH_BOTTOM_MARGIN {50};
     const qint32 GRAPH_TOP_MARGIN {GRAPH_BOTTOM_MARGIN};
 
-    const qint32 GRAPH_DIV_X {10};
+    const qint32 GRAPH_DIV_X {8};
     const qint32 GRAPH_DIV_Y {10};
 public:
     GraphPainter(QQuickItem* _parent = nullptr);
@@ -28,7 +30,7 @@ public slots:
     void setMaxMinValues(const QPair<QPointF, QPointF>& _maxMinXYPair);
 
 private:
-    QVector<QPointF> m_points;
+    QSharedPointer<QVector<QPointF>> m_points;
     QVector<QSharedPointer<QFutureWatcher<size_t>>> m_watchers;
     qint32 m_watchersReadyCount;
 
